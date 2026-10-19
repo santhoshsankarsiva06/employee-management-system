@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employee</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #172033;
+            margin: 0;
+            padding: 30px 16px;
+        }
+
+        main {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 28px;
+            border-radius: 12px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            padding: 12px 18px;
+            margin-top: 22px;
+            cursor: pointer;
+        }
+
+        a {
+            margin-left: 15px;
+            color: #4f46e5;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Edit Employee</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="post">
+            <label for="name">Employee Name</label>
+            <input id="name" name="name"
+                   value="{{ employee.name }}" required>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email"
+                   value="{{ employee.email }}" required>
+
+            <label for="phone">Phone Number</label>
+            <input id="phone" type="tel" name="phone"
+                   value="{{ employee.phone }}" required>
+
+            <label for="department">Department</label>
+            <input id="department" name="department"
+                   value="{{ employee.department }}" required>
+
+            <label for="designation">Designation</label>
+            <input id="designation" name="designation"
+                   value="{{ employee.designation }}" required>
+
+            <label for="salary">Monthly Salary (INR)</label>
+            <input id="salary" type="number" name="salary"
+                   value="{{ employee.salary }}"
+                   min="0" max="1000000000" step="0.01" required>
+
+            <label for="joining_date">Joining Date</label>
+            <input id="joining_date" type="date" name="joining_date"
+                   value="{{ employee.joining_date }}" required>
+
+            <button type="submit">Update Employee</button>
+            <a href="{{ url_for('home') }}">Cancel</a>
+        </form>
+    </main>
+</body>
+</html>

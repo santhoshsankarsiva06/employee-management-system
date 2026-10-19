@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+            color: #172033;
+        }
+
+        header {
+            background: #172033;
+            color: white;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .card, .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000008;
+        }
+
+        .card {
+            flex: 1;
+        }
+
+        .card strong {
+            display: block;
+            font-size: 32px;
+            margin-top: 12px;
+            color: #4f46e5;
+        }
+
+        .panel {
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            padding: 11px 18px;
+            cursor: pointer;
+        }
+
+        .save {
+            margin-top: 18px;
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search a {
+            align-self: center;
+            color: #4f46e5;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8fafc;
+        }
+
+        .delete {
+            background: #dc2626;
+            padding: 8px 12px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Employee Management System</h1>
+        <p>Manage employee records in one place</p>
+        <form action="{{ url_for('logout') }}"
+      method="post"
+      style="margin-top:15px;">
+    <button type="submit">Logout</button>
+</form>
+    </header>
+
+    <main>
+        <div class="stats">
+            <div class="card">
+                Total Employees
+                <strong>{{ total }}</strong>
+            </div>
+
+            <div class="card">
+                Departments
+                <strong>{{ departments }}</strong>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <section class="panel">
+            <h2>Add Employee</h2>
+
+            <form action="{{ url_for('add_employee') }}" method="post">
+                <div class="form-grid">
+                    <div>
+                        <label for="name">Employee Name</label>
+                        <input id="name" name="name" required>
+                    </div>
+
+                    <div>
+                        <label for="email">Email</label>
+                        <input id="email" type="email" name="email" required>
+                    </div>
+
+                    <div>
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" type="tel" name="phone" required>
+                    </div>
+
+                    <div>
+                        <label for="department">Department</label>
+                        <input id="department" name="department"
+                               placeholder="Example: IT" required>
+                    </div>
+
+                    <div>
+                        <label for="designation">Designation</label>
+                        <input id="designation" name="designation"
+                               placeholder="Example: Developer" required>
+                    </div>
+
+                    <div>
+                        <label for="salary">Monthly Salary (INR)</label>
+                        <input id="salary" type="number" name="salary"
+                               min="0" max="1000000000" step="0.01" required>
+                    </div>
+
+                    <div>
+                        <label for="joining_date">Joining Date</label>
+                        <input id="joining_date" type="date"
+                               name="joining_date" required>
+                    </div>
+                </div>
+
+                <button class="save" type="submit">Save Employee</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Employee Records</h2>
+
+            <form class="search" method="get"
+                  action="{{ url_for('home') }}">
+                <input name="search" value="{{ search }}"
+                       placeholder="Search by name or department">
+                <button type="submit">Search</button>
+                <a href="{{ url_for('home') }}">Reset</a>
+            </form>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Salary (INR)</th>
+                            <th>Joining Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td>EMP{{ "%03d"|format(employee.id) }}</td>
+                            <td>{{ employee.name }}</td>
+                            <td>{{ employee.email }}</td>
+                            <td>{{ employee.phone }}</td>
+                            <td>{{ employee.department }}</td>
+                            <td>{{ employee.designation }}</td>
+                            <td>{{ "%.2f"|format(employee.salary) }}</td>
+                            <td>{{ employee.joining_date }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_employee', employee_id=employee.id) }}"
+   style="display:inline-block; margin-bottom:8px; color:#4f46e5;">
+    Edit
+</a>
+                                <form method="post"
+                                      action="{{ url_for('delete_employee',
+                                                employee_id=employee.id) }}"
+                                      onsubmit="return confirm('Delete this employee?');">
+                                    <button class="delete" type="submit">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9">No employees found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
